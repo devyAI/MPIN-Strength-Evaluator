@@ -73,7 +73,7 @@ def evaluate_pin_strength(pin, common_pins, demographic_pins):
 
 
 if __name__ == "__main__":
-    pin_file_path = "/Users/dev/Desktop/OneBanc_assignment_devyani/most_common_pins/4_digit_freq.csv"  
+    pin_file_path = "/Users/dev/Desktop/OneBanc_assignment_devyani/most_common_pins/6_digit_pins.csv"  
     common_pins = load_most_common_pins(pin_file_path)
 
     print("Loaded Common PINs:", common_pins)
