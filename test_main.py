@@ -24,8 +24,6 @@ test_cases = [
     ("4321", "1234", {"dob_self": {"0201"}, "dob_spouse": {"0302"}, "anniversary": {"0506"}}, "STRONG", []),
     ("0198", "1234", {"dob_self": {"0201", "0198"}, "dob_spouse": {"0302"}, "anniversary": {"0506"}}, "WEAK", ["DEMOGRAPHIC_DOB_SELF"]),
 ]
-
-
 for i, (pin, common_pin, demographic_pins, expected_strength, expected_reasons) in enumerate(test_cases):
     strength, reasons = evaluate_pin_strength(pin, common_pin, demographic_pins)
     print(f"Test Case {i + 1}:")

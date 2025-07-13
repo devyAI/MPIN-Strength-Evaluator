@@ -1,4 +1,5 @@
 import pandas as pd
+import datetime
 
 def load_most_common_pins(pin_file_path, top_n=100):
     try:
@@ -13,6 +14,18 @@ def load_most_common_pins(pin_file_path, top_n=100):
         print(f"Error: {e}")
         return []
 
+def validateDOB(dob):
+    try:
+        if len(dob) != 8 or not dob.isdigit():
+            return False, "Invalid format. Please enter DOB in DDMMYYYY format."
+        dob_date = datetime.datetime.strptime(dob, "%d%m%Y").date()
+        
+        if dob_date > datetime.date.today():
+            return False, "DOB cannot be in the future."
+        
+        return True, "Valid DOB."
+    except ValueError:
+        return False, "Invalid date. Please enter a valid DOB."
 
 def demographicPins(dob, spouse_dob, anniversary):
     pins = {
@@ -26,14 +39,12 @@ def demographicPins(dob, spouse_dob, anniversary):
             mm = date[2:4]
             yyyy = date[4:]
             yy = date[6:]
-            return {dd + mm,mm + dd,yyyy,yy + mm,mm + yy}
+            return {dd + mm, mm + dd, yy + mm, mm + yy, dd + yy, yy + dd}
         return set()
-    if dob:
-        pins["dob_self"].update(permutations(dob))
-    if spouse_dob:
-        pins["dob_spouse"].update(permutations(spouse_dob))
-    if anniversary:
-        pins["anniversary"].update(permutations(anniversary))
+
+    pins["dob_self"] = permutations(dob)
+    pins["dob_spouse"] = permutations(spouse_dob)
+    pins["anniversary"] = permutations(anniversary)
     return pins
 
 def evaluate_pin_strength(pin, common_pins, demographic_pins):
@@ -52,23 +63,36 @@ def evaluate_pin_strength(pin, common_pins, demographic_pins):
     else:
         return "STRONG", []
 
-
 if __name__ == "__main__":
     pin_file_path = "/Users/dev/Desktop/OneBanc_assignment_devyani/most_common_pins/4_digit_freq.csv"  
     common_pins = load_most_common_pins(pin_file_path)
 
     print("Loaded Common PINs:", common_pins)
 
-    dob = input("Enter your Date of Birth (DDMMYYYY): ")
-    spouse_dob = input("Enter your Spouse's Date of Birth (DDMMYYYY): ")
-    anniversary = input("Enter your Wedding Anniversary (DDMMYYYY): ")
-    demographic_pins = demographicPins(dob, spouse_dob, anniversary)
+    while True:
+        dob = input("Enter your Date of Birth(DDMMYYYY): ")
+        is_valid, message = validateDOB(dob)
+        print(message)
+        if is_valid:
+            break
+    while True:
+        spouse_dob = input("Enter your Spouse's Date of Birth(DDMMYYYY): ")
+        is_valid, message = validateDOB(spouse_dob)
+        print(message)
+        if is_valid:
+            break
 
+    while True:
+        anniversary = input("Enter your Anniversary Date(DDMMYYYY): ")
+        is_valid, message = validateDOB(anniversary)
+        print(message)
+        if is_valid:
+            break
+
+    demographic_pins = demographicPins(dob, spouse_dob, anniversary)
     print("Generated Demographic PINs:", demographic_pins)
 
-    pin = input("Enter PIN to evaluate its strength: ")
-    if len(pin) != 4:
-        print("invalid length, enter  digit")
+    pin = input("Enter a PIN to evaluate its strength: ")
     strength, reasons = evaluate_pin_strength(pin, common_pins, demographic_pins)
-    print(f"Strength: {strength}")
-    print(f"Reasons: {reasons}")
+    print(f"PIN Strength: {strength}")
+    print("Reasons:", reasons)
