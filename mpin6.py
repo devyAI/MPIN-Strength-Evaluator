@@ -26,7 +26,7 @@ def generate_demographic_pins(dob, spouse_dob, anniversary):
             mm = date[2:4]
             yyyy = date[4:]
             yy = date[6:]
-            return {dd + mm + yy, mm + dd + yy, yyyy[:2] + dd + mm, yyyy[:2] + mm + dd}
+            return {dd + mm + yy,mm + dd + yy, yyyy[:2] + dd + mm, yyyy[:2] + mm + dd}
         return set()
     if dob:
         pins["dob_self"].update(extract_combinations(dob))
@@ -40,14 +40,14 @@ def generate_demographic_pins(dob, spouse_dob, anniversary):
 def evaluate_pin_strength(pin, common_pins, demographic_pins):
     reasons = []
     if pin in common_pins:
-        reasons.append("COMMONLY_USED")
+        reasons.append("common_pin")
     
     if pin in demographic_pins["dob_self"]:
-        reasons.append("DEMOGRAPHIC_DOB_SELF")
+        reasons.append("demographic_dob_self")
     if pin in demographic_pins["dob_spouse"]:
-        reasons.append("DEMOGRAPHIC_DOB_SPOUSE")
+        reasons.append("demographic_dob_spouse")
     if pin in demographic_pins["anniversary"]:
-        reasons.append("DEMOGRAPHIC_ANNIVERSARY")
+        reasons.append("demographic_anniversary")
     
     if reasons:
         return "WEAK", reasons
